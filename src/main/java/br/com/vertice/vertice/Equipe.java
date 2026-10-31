@@ -40,6 +40,30 @@ public class Equipe{
         this.id = id;
         this.membros = membros;
     }
+    public Equipe(String nome, String sigla, List<String> membros){
+        
+        if(nome == null || nome.isBlank()){
+            throw new IllegalArgumentException("Nome invalido");
+        }
+        if(sigla == null || sigla.isBlank()){
+            throw new IllegalArgumentException("Sigla invalida");
+        }
+       
+        if (membros == null) {
+            throw new IllegalArgumentException("A lista de membros não pode ser nula.");
+        }
+        for (String membro : membros) {
+            if (membro == null || membro.isBlank()) {
+                throw new IllegalArgumentException("Nome de membro inválido.");
+            }
+        }
+        
+        
+        this.nome = nome;
+        this.sigla = sigla;
+        this.id = 0;
+        this.membros = membros;
+    }
 
     public String getNome() {
         return nome;
