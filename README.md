@@ -4,47 +4,54 @@
 
 O Vértice é uma aplicação desktop desenvolvida em Java para organizar e gerenciar campeonatos de Valorant, inspirada no modelo de equipes parceiras do **Valorant Champions Tour (VCT)**.
 
-O sistema utiliza um cadastro centralizado de equipes, permitindo que organizações previamente cadastradas participem de diferentes campeonatos.
-
 O projeto está sendo desenvolvido para a disciplina de Programação Orientada a Objetos (POO).
 
 ## Funcionalidades planejadas
 
-- Cadastro e gerenciamento de equipes e jogadores.
-- Criação e gerenciamento de campeonatos.
-- Seleção de equipes previamente cadastradas.
-- Inscrição de equipes em campeonatos.
-- Sorteio automático dos confrontos.
-- Geração de chaveamentos de eliminação simples.
-- Passagem automática de rodada (*bye*) quando necessário.
-- Registro dos placares das partidas.
-- Avanço automático dos vencedores.
-- Definição do campeão.
-- Consulta ao histórico de participações e conquistas das equipes.
+- Cadastro de equipes e jogadores.
+- Criação de campeonatos e inscrição de equipes.
+- Sorteio dos confrontos e chaveamento de eliminação simples, com *bye* quando necessário.
+- Registro de placares, avanço dos vencedores e definição do campeão.
+- Histórico de participações e conquistas das equipes.
 
 ## Tecnologias
 
-- Java
-- Java Swing (JFrame e JPanel)
-- Apache Maven
-- SQL puro e JDBC
+- Java, Java Swing e Apache Maven
+- PostgreSQL 17, com JDBC e SQL puro
+- Docker
 - Git e GitHub
 
 ## Arquitetura
 
-O sistema está sendo desenvolvido com separação em três camadas:
+O sistema é dividido em três camadas:
 
-- **View/Controller:** interface gráfica e interação com o usuário.
-- **Service:** regras de negócio e processamento das operações.
-- **Persistência/Database:** armazenamento e recuperação dos dados.
+- **View/Controller** (`ui`): interface gráfica.
+- **Service** (`service`): regras de negócio.
+- **Persistência** (`repository`): acesso ao banco de dados com JDBC.
 
-A comunicação entre View/Controller e Service utiliza DTOs (*Data Transfer Objects*).
+A comunicação entre interface e Service utiliza DTOs, e o Service acessa a persistência por meio de interfaces de Repository.
 
 ## Estado do projeto
 
-**Em desenvolvimento.**
+**Em desenvolvimento.** O cadastro de equipes e jogadores está implementado de ponta a ponta, com persistência no PostgreSQL. As próximas etapas são a listagem de equipes e o gerenciamento de campeonatos.
 
-Atualmente, estão implementadas as classes iniciais de domínio e a interface de cadastro de equipes, com comunicação entre View/Controller e Service. A persistência em banco de dados ainda não foi implementada.
+## Como executar
+
+Pré-requisitos: JDK na versão configurada no `pom.xml`, Maven (ou NetBeans) e Docker.
+
+**1. Criar o banco de dados** (na pasta do projeto):
+
+```bash
+docker run --name vertice-db -e POSTGRES_USER=vertice -e POSTGRES_PASSWORD=vertice123 -e POSTGRES_DB=vertice -p 5432:5432 -v vertice-dados:/var/lib/postgresql/data -d postgres:17
+```
+
+**2. Criar as tabelas:**
+
+```bash
+docker exec -i vertice-db psql -U vertice -d vertice < schema.sql
+```
+
+**3. Executar a aplicação:** abra o projeto no NetBeans e execute-o (*Run Project*).
 
 ## Objetivo acadêmico
 
