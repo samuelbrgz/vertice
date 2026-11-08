@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package br.com.vertice.vertice.ui;
+
+import java.sql.SQLException;
+import br.com.vertice.vertice.exception.NegocioException;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
@@ -184,9 +187,15 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
         for(int i = 0; i < modeloJogadores.getSize(); i++){
             jogadores.add(modeloJogadores.getElementAt(i));
         }
-        EquipeDTO edto = new EquipeDTO(equipe, sigla, jogadores);
-        EquipeService esrv = new EquipeService();
-        esrv.cadastrarEquipe(edto);
+        try {
+            EquipeDTO edto = new EquipeDTO(equipe, sigla, jogadores);
+            EquipeService esrv = new EquipeService();
+            esrv.cadastrarEquipe(edto);
+            JOptionPane.showMessageDialog(rootPane, "Equipe cadastrada com sucesso.");
+        } catch (NegocioException erro) {
+            JOptionPane.showMessageDialog(rootPane, "[ERRO]: " + erro.getMessage());
+        }
+        
     }//GEN-LAST:event_btnCadastrarEquipeActionPerformed
 
     /**
