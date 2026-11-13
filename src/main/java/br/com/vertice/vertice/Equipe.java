@@ -12,9 +12,8 @@ public class Equipe{
     private String nome;
     private String sigla;
     private int id;
-    private List<String> membros;
 
-    public Equipe(String nome, String sigla, int id, List<String> membros){
+    public Equipe(String nome, String sigla, int id){
         
         if(nome == null || nome.isBlank()){
             throw new IllegalArgumentException("Nome invalido");
@@ -25,22 +24,14 @@ public class Equipe{
         if(id < 0 || id == 0){
             throw new IllegalArgumentException("Id invalido");
         }
-        if (membros == null) {
-            throw new IllegalArgumentException("A lista de membros não pode ser nula.");
-        }
-        for (String membro : membros) {
-            if (membro == null || membro.isBlank()) {
-                throw new IllegalArgumentException("Nome de membro inválido.");
-            }
-        }
+
         
         
         this.nome = nome;
         this.sigla = sigla;
         this.id = id;
-        this.membros = membros;
     }
-    public Equipe(String nome, String sigla, List<String> membros){
+    public Equipe(String nome, String sigla){
         
         if(nome == null || nome.isBlank()){
             throw new IllegalArgumentException("Nome invalido");
@@ -48,21 +39,13 @@ public class Equipe{
         if(sigla == null || sigla.isBlank()){
             throw new IllegalArgumentException("Sigla invalida");
         }
-       
-        if (membros == null) {
-            throw new IllegalArgumentException("A lista de membros não pode ser nula.");
-        }
-        for (String membro : membros) {
-            if (membro == null || membro.isBlank()) {
-                throw new IllegalArgumentException("Nome de membro inválido.");
-            }
-        }
+      
         
         
         this.nome = nome;
         this.sigla = sigla;
         this.id = 0;
-        this.membros = membros;
+ 
     }
 
     public String getNome() {
@@ -77,7 +60,5 @@ public class Equipe{
         return id;
     }
 
-    public List<String> getMembros() {
-        return membros;
-    }
+  
 }

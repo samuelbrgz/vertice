@@ -4,29 +4,42 @@
  */
 package br.com.vertice.vertice.ui;
 
-import java.sql.SQLException;
 import br.com.vertice.vertice.exception.NegocioException;
-import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
 import br.com.vertice.vertice.dto.EquipeDTO;
 import br.com.vertice.vertice.service.EquipeService;
+import java.util.List;
 
 /**
  *
  * @author samuelborges
  */
 public class TelaCadastroEquipe extends javax.swing.JFrame {
-    private DefaultListModel<String> modeloJogadores = new DefaultListModel<>();
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaCadastroEquipe.class.getName());
+    private void carregarTabela(){
+        DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+        modelo.setRowCount(0);
+        
+        try{
+            EquipeService esrvc = new EquipeService();
+            List<EquipeDTO> edto = esrvc.listarEquipes();
+            for(EquipeDTO equipe : edto){
+                modelo.addRow(new Object[]{equipe.getId(), equipe.getNomeEquipe(), equipe.getSigla()});
+            }
+        } catch(NegocioException erro){
+            JOptionPane.showMessageDialog(rootPane, "[ERRO]: " + erro.getMessage());
+        }
+    }
 
     /**
      * Creates new form TelaCadastroEquipe
      */
     public TelaCadastroEquipe() {
         initComponents();
-        ListJogadores.setModel(modeloJogadores);
+        carregarTabela();
         
     }
 
@@ -45,12 +58,10 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         txtSigla = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        txtJogador = new javax.swing.JTextField();
-        btnAdicionarJogador = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        ListJogadores = new javax.swing.JList<>();
         btnCadastrarEquipe = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabela = new javax.swing.JTable();
+        btnExcluir = new javax.swing.JButton();
 
         jButton1.setText("Cadastrar Equipe");
 
@@ -64,17 +75,32 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
 
         txtSigla.addActionListener(this::txtSiglaActionPerformed);
 
-        jLabel4.setText("Jogadores:");
-
-        txtJogador.addActionListener(this::txtJogadorActionPerformed);
-
-        btnAdicionarJogador.setText("Adicionar Jogador");
-        btnAdicionarJogador.addActionListener(this::btnAdicionarJogadorActionPerformed);
-
-        jScrollPane1.setViewportView(ListJogadores);
-
         btnCadastrarEquipe.setText("Cadastrar");
         btnCadastrarEquipe.addActionListener(this::btnCadastrarEquipeActionPerformed);
+
+        tabela.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Id", "Nome", "Sigla"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tabela);
+
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(this::btnExcluirActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,36 +109,29 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtEquipe)
-                                    .addComponent(txtSigla)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtJogador)
-                                            .addComponent(jScrollPane1))
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnAdicionarJogador, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(189, 189, 189)
-                                .addComponent(jLabel2)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCadastrarEquipe, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtEquipe, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                            .addComponent(txtSigla)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(189, 189, 189)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(138, 138, 138)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCadastrarEquipe, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(104, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(4, 4, 4)
+                .addContainerGap(32, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -123,15 +142,12 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSigla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtJogador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdicionarJogador, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                 .addComponent(btnCadastrarEquipe, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnExcluir)
+                .addGap(166, 166, 166))
         );
 
         pack();
@@ -141,33 +157,10 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSiglaActionPerformed
 
-    private void txtJogadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtJogadorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtJogadorActionPerformed
-
-    private void btnAdicionarJogadorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarJogadorActionPerformed
-        String jogador = txtJogador.getText();
-        
-        if(jogador.isBlank()){
-            JOptionPane.showMessageDialog(rootPane, "[ERRO]: Nome inválido.");
-            return;
-        }
-        
-        if(modeloJogadores.getSize() == 6){
-            JOptionPane.showMessageDialog(rootPane, "[ERRO]: Quantidade limite de jogadores atingido.");
-            return;
-        }
-        
-        modeloJogadores.addElement(jogador);
-        txtJogador.setText("");
-        
-    }//GEN-LAST:event_btnAdicionarJogadorActionPerformed
-
     private void btnCadastrarEquipeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarEquipeActionPerformed
         String equipe = txtEquipe.getText();
         String sigla = txtSigla.getText();
-        ArrayList<String> jogadores = new ArrayList();
-        
+
         if(equipe.isBlank()){
             JOptionPane.showMessageDialog(rootPane, "[ERRO]: Nome de equipe inválido.");
             return;
@@ -180,23 +173,42 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "[ERRO]: Sigla deve ter 3 caracteres.");
             return;
         }
-        if(modeloJogadores.getSize() < 5){
-            JOptionPane.showMessageDialog(rootPane, "[ERRO]: Adicione pelo menos 5 jogadores.");
-            return;
-        }
-        for(int i = 0; i < modeloJogadores.getSize(); i++){
-            jogadores.add(modeloJogadores.getElementAt(i));
-        }
+
         try {
-            EquipeDTO edto = new EquipeDTO(equipe, sigla, jogadores);
+            EquipeDTO edto = new EquipeDTO(equipe, sigla);
             EquipeService esrv = new EquipeService();
             esrv.cadastrarEquipe(edto);
             JOptionPane.showMessageDialog(rootPane, "Equipe cadastrada com sucesso.");
+            carregarTabela();
         } catch (NegocioException erro) {
             JOptionPane.showMessageDialog(rootPane, "[ERRO]: " + erro.getMessage());
         }
-        
+
     }//GEN-LAST:event_btnCadastrarEquipeActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        int linha = tabela.getSelectedRow();
+        
+        if(linha == -1){
+            JOptionPane.showMessageDialog(rootPane, "[ERRO]: Selecione uma linha");
+            return;
+        }
+        
+        int id = Integer.parseInt(tabela.getValueAt(linha, 0).toString());
+        int resposta = JOptionPane.showConfirmDialog(rootPane, "Confirmar a exclusão?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+        if (resposta != JOptionPane.YES_OPTION) {
+            return;
+        }
+        
+        try{
+            EquipeService esrv = new EquipeService();
+            esrv.excluirEquipe(id);
+            carregarTabela();
+        } catch(NegocioException erro){
+            JOptionPane.showMessageDialog(rootPane, "[ERRO]: " + erro.getMessage());
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,17 +236,15 @@ public class TelaCadastroEquipe extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList<String> ListJogadores;
-    private javax.swing.JButton btnAdicionarJogador;
     private javax.swing.JButton btnCadastrarEquipe;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tabela;
     private javax.swing.JTextField txtEquipe;
-    private javax.swing.JTextField txtJogador;
     private javax.swing.JTextField txtSigla;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,7 @@ package br.com.vertice.vertice.repository;
 
 import br.com.vertice.vertice.Equipe;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  *
@@ -13,4 +14,7 @@ import java.sql.SQLException;
  */
 public interface EquipeRepository {
     public void salvarEquipe(Equipe e) throws SQLException;
+    public List<Equipe> listarEquipes() throws SQLException;
+    public void excluirEquipe(int id) throws SQLException;
+
 }

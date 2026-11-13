@@ -1,29 +1,34 @@
 
 package br.com.vertice.vertice.dto;
-import java.util.List;
+
 
 
 public class EquipeDTO {
-    private String NomeEquipe;
-    private String Sigla;
-    private List<String> jogadores;
+    private String nomeEquipe;
+    private String sigla;
+    private int id;
 
     public String getNomeEquipe() {
-        return NomeEquipe;
+        return nomeEquipe;
     }
 
     public String getSigla() {
-        return Sigla;
+        return sigla;
     }
 
-    public List<String> getJogadores() {
-        return jogadores;
+    public int getId() {
+        return id;
     }
 
-    public EquipeDTO(String NomeEquipe, String Sigla, List<String> jogadores) {
-        this.NomeEquipe = NomeEquipe;
-        this.Sigla = Sigla;
-        this.jogadores = jogadores;
+
+    public EquipeDTO(String nomeEquipe, String sigla) {
+        this.nomeEquipe = nomeEquipe;
+        this.sigla = sigla;
+    }
+    public EquipeDTO(String nomeEquipe, String sigla, int id) {
+        this.nomeEquipe = nomeEquipe;
+        this.sigla = sigla;
+        this.id = id;
     }
     
     
